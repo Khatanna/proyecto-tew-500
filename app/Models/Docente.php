@@ -38,16 +38,16 @@ class Docente extends Model implements Authenticatable
 
   public function get_materias_by_semestre_and_gestion(array $semestres, int $gestion)
   {
-    return $this->belongsToMany(Materia::class, "Imparte")->whereIn("semestre", $semestres)->wherePivot("gestion", $gestion)->withPivot('gestion', 'periodo', 'turno')->orderByPivot("periodo");
+    return $this->belongsToMany(Materia::class, "imparte")->whereIn("semestre", $semestres)->wherePivot("gestion", $gestion)->withPivot('gestion', 'periodo', 'turno')->orderByPivot("periodo");
   }
 
   public function get_materias_by_gestion(int $gestion)
   {
-    return $this->belongsToMany(Materia::class, "Imparte")->withPivot('gestion', 'periodo', 'turno')->wherePivot("gestion", $gestion)->orderByPivot("periodo");
+    return $this->belongsToMany(Materia::class, "imparte")->withPivot('gestion', 'periodo', 'turno')->wherePivot("gestion", $gestion)->orderByPivot("periodo");
   }
 
   public function materias()
   {
-    return $this->belongsToMany(Materia::class, "Imparte")->withPivot('gestion', 'periodo', 'turno')->withPivot('id');
+    return $this->belongsToMany(Materia::class, "imparte")->withPivot('gestion', 'periodo', 'turno')->withPivot('id');
   }
 }
