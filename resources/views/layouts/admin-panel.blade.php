@@ -44,9 +44,7 @@
                 <li class="plantel-item ms-3 px-2">
                   <a class="dropdown-item" href="{{ route('admin.dashboard.docentes.index') }}">Ver todos</a>
                 </li>
-                <li class="plantel-item ms-3 px-2">
-                  <a class="dropdown-item" href="{{ route('admin.dashboard.docentes.create') }}">Registrar</a>
-                </li>
+
                 <li class="plantel-item ms-3 px-2">
 
                 </li>
@@ -60,12 +58,6 @@
                 <li class="plantel-item ms-3 px-2">
                   <a class="dropdown-item" href="{{ route('admin.dashboard.materias.index') }}">Ver todas</a>
                 </li>
-                <li class="plantel-item ms-3 px-2">
-                  <a class="dropdown-item" href="{{ route('admin.dashboard.docentes.create') }}">Registrar</a>
-                </li>
-                <li class="plantel-item ms-3 px-2">
-                  <a class="dropdown-item" href="{{ route('admin.dashboard.docentes.create') }}">Crear asignacion</a>
-                </li>
               </ul>
             </li>
             <li class="nav-item dropdown">
@@ -74,14 +66,16 @@
               </a>
               <ul class="list-unstyled" id="plantel-list">
                 <li class="plantel-item ms-3 px-2">
-                  <a class="dropdown-item" href="{{ route('admin.dashboard.docentes.index') }}">Ver todos</a>
+                  <a class="dropdown-item" href="{{ route('admin.dashboard.estudiantes.index') }}">Ver todos</a>
                 </li>
                 <li class="plantel-item ms-3 px-2">
-                  <a class="dropdown-item" href="{{ route('admin.dashboard.docentes.create') }}">Registrar</a>
+
                 </li>
               </ul>
             </li>
           </ul>
+
+          <a href="{{ route('login') }}" class="btn btn-sm btn-primary position-fixed bottom-0 my-3 px-5 top">Salir</a>
         </div>
       </div>
     </div>

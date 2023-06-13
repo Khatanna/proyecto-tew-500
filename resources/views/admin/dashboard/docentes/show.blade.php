@@ -5,14 +5,20 @@
 
 @endsection
 @section('content')
-  @error('gestion')
+  @error('message-error')
   <div class="alert alert-danger mt-2" role="alert" id="alert">
     <strong>{{$message}}</strong>
     <span class="alert-close float-end btn-close" onclick="closeAlert()"></span>
   </div>
   @enderror
-  <a href="{{ url()->previous()}}">Volver</a>
-  <h2>Docente <strong>{{ $docente->nombres }}</strong></h2>
+  @error('message-success')
+  <div class="alert alert-success mt-2" role="alert" id="alert">
+    <strong>{{$message}}</strong>
+    <span class="alert-close float-end btn-close" onclick="closeAlert()"></span>
+  </div>
+  @enderror
+  <a href="{{ url()->previous()}}" class="btn btn-sm btn-outline-danger mt-2">Volver</a>
+  <h2>Docente: <strong>{{ $docente->nombres }} - ({{$docente->codigo }})</strong></h2>
   <table class="table table-striped align-middle">
     <thead>
     <tr>
@@ -52,11 +58,11 @@
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="exampleModalLabel">Información de docente</h1>
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Información de asignación</h1>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                  <form action="{{ route('admin.dashboard.asignaciones.update')}}" method="post" class="row g-3" id="form-update">
+                  <form action="{{ route('admin.dashboard.docentes.asignaciones.update')}}" method="post" class="row g-3" id="form-update">
                     @csrf
                     @method('put')
                     <label hidden>
@@ -108,6 +114,14 @@
                     <label for="gestion_id" class="col-md-6">
                       Gestion:
                       <input type="number" min="2020" max="{{ \Carbon\Carbon::now()->year }}" step="1" value="{{ $materia->pivot->gestion }}" class="form-control" name="gestion">
+                    </label>
+                    <label for="primer_parcial_id" class="col-md-6">
+                      Fecha primer parcial:
+                      <input type="date" value="{{ $materia->pivot->primer_parcial }}" class="form-control" name="primer_parcial">
+                    </label>
+                    <label for="segundo_parcial_id" class="col-md-6">
+                      Fecha segundo parcial:
+                      <input type="date" value="{{ $materia->pivot->segundo_parcial }}" class="form-control" name="segundo_parcial">
                     </label>
                     <div class="col-md-12">
                       <button type="button" class="btn btn-warning float-start" data-bs-dismiss="modal">Cancelar

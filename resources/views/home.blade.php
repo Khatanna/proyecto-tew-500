@@ -4,7 +4,9 @@
 
 @section('styles')
   <style>
-
+    * {
+      /*outline: 1px solid red;*/
+    }
   </style>
 @endsection
 
@@ -58,48 +60,75 @@
           <input type="submit" value="Filtrar" class="btn btn-sm btn-outline-secondary">
         </form>
       </div>
-      <div class="col-md-10 vh-100">
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
-          <div class="container-fluid">
-            <div class="navbar-brand d-flex align-items-center gap-2" href="#">
-              <div>
-                <x-avatar :name="auth()->user()->nombres"/>
+      <div class="col-md-10">
+        <div class="row justify-content-center gap-2 v-100">
+          <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+              <div class="navbar-brand d-flex align-items-center gap-2" href="#">
+                <div>
+                  <x-avatar :name="auth()->user()->nombres"/>
+                </div>
+                <ul class="navbar-nav">
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      {{ auth()->user()->nombres }}
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li>
+                        <form action="{{ route('auth.logout') }}" method="post">
+                          @csrf
+                          <input type="submit" value="Cerrar sesión" role="button" class="dropdown-item">
+                        </form>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
               </div>
-              <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    {{ auth()->user()->nombres }}
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li>
-                      <form action="{{ route('auth.logout') }}" method="post">
-                        @csrf
-                        <input type="submit" value="Cerrar sesión" role="button" class="dropdown-item">
-                      </form>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
             </div>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-              </ul>
-              <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Buscar estudiante" aria-label="Search">
-                <button class="btn btn-success" type="submit">Buscar</button>
-              </form>
-            </div>
+          </nav>
+          <div class="row">
+            @foreach($materias->filter(fn($m) => $m->pivot->periodo == "I") as $materia)
+              <div class="col-md-4 pe-3">
+                <div class="row border rounded-2 p-2">
+                  <div class="fs-3">
+                    {{ $materia->codigo }}
+                  </div>
+                  <div>
+                    {{ $materia->nombre }}
+                  </div>
+                  <div>
+                    Gestion: <b>{{ $materia->pivot->periodo }}</b> / {{ $materia->pivot->gestion }}
+                  </div>
+                  <div>
+                    <small>
+                      Turno: {{ $materia->pivot->turno }}
+                      @if($materia->pivot->turno === "noche")
+                        🌚
+                      @elseif($materia->pivot->turno === "tarde")
+                        🌤
+                      @else
+                        🌞
+                      @endif
+                    </small>
+                  </div>
+                  <div class="mt-4">
+                    <a href="{{ route('docente.estudiantes', ["imparte" => $materia->pivot->id])}}" class="btn btn-outline-warning w-100">🗒
+                      Ver Notas</a>
+                    <div class="d-flex gap-2">
+                      <a href="{{ route('docente.laboratorios.index', ["imparte" => $materia->pivot->id]) }}" class="btn btn-outline-primary w-50 mt-2">🔬
+                        Laboratorios</a>
+                      <a href="{{ route('docente.asistencias.index', ["imparte" => $materia->pivot->id]) }}" class="btn btn-outline-success  w-50 mt-2">🙋‍♀️🙋‍♂️
+                        Asistencias</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            @endforeach
           </div>
-        </nav>
-        <h1 class="text-center">Materias</h1>
-        <div class="row mx-2">
-          @foreach($materias->filter(fn($m) => $m->pivot->periodo == "I") as $materia)
-              <div class="col-md-3 border rounded-2 p-3 d-flex flex-column justify-content-between me-2">
-                <div class="row">
+          <div class="row">
+            @foreach($materias->filter(fn($m) => $m->pivot->periodo == "II") as $materia)
+              <div class="col-md-4 pe-3">
+                <div class="row border rounded-2 p-2">
                   <div class="fs-3">
                     {{ $materia->codigo }}
                   </div>
@@ -121,45 +150,20 @@
                       @endif
                     </small>
                   </div>
-                </div>
-                <div class="mt-4">
-                  <a href="{{ route('docente.estudiantes', ["codigo" => $materia->codigo,"periodo" => $materia->pivot->periodo,"gestion" => $materia->pivot->gestion, "turno" => $materia->pivot->turno])}}" class="btn btn-outline-warning">🗒 Ver Notas</a>
-                </div>
-              </div>
-          @endforeach
-        </div>
-        <hr>
-        <div class="row mx-2">
-          @foreach($materias->filter(fn($m) => $m->pivot->periodo == "II") as $materia)
-            <div class="col-md-3 border rounded-2 p-3 d-flex flex-column justify-content-between me-2">
-              <div class="row">
-                <div class="fs-3">
-                  {{ $materia->codigo }}
-                </div>
-                <div>
-                  {{ $materia->nombre }}
-                </div>
-                <div>
-                  <b>{{ $materia->pivot->periodo }}</b> / {{ $materia->pivot->gestion }}
-                </div>
-                <div>
-                  <small>
-                    turno: {{ $materia->pivot->turno }}
-                    @if($materia->pivot->turno === "noche")
-                      🌚
-                    @elseif($materia->pivot->turno === "tarde")
-                      🌤
-                    @else
-                      🌞
-                    @endif
-                  </small>
+                  <div class="mt-4">
+                    <a href="{{ route('docente.estudiantes',  ["imparte" => $materia->pivot->id])}}" class="btn btn-outline-warning w-100">🗒
+                      Ver Notas</a>
+                    <div class="d-flex gap-2">
+                      <a href="{{ route('docente.laboratorios.index', ["imparte" => $materia->pivot->id]) }}" class="btn btn-outline-primary w-50 mt-2">🔬
+                        Laboratorios</a>
+                      <a href="{{ route('docente.asistencias.index', ["imparte" => $materia->pivot->id]) }}" class="btn btn-outline-success  w-50 mt-2">🙋‍♀️🙋‍♂️
+                        Asistencias</a>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="mt-4">
-                <a href="{{ route('docente.estudiantes', ["codigo" => $materia->codigo,"periodo" => $materia->pivot->periodo,"gestion" => $materia->pivot->gestion, "turno" => $materia->pivot->turno])}}" class="btn btn-outline-warning">🗒 Ver Notas</a>
-              </div>
-            </div>
-          @endforeach
+            @endforeach
+          </div>
         </div>
       </div>
     </div>

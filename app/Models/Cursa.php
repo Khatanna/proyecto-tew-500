@@ -7,7 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cursa extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $table = "cursa";
+  protected $table = "cursa";
+  public $fillable = [
+    "imparte_id",
+    "estudiante_id"
+  ];
+
+  public $timestamps = false;
+
+  public function materias()
+  {
+    return $this->hasManyThrough(Materia::class, Imparte::class);
+  }
 }

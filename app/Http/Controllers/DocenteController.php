@@ -38,7 +38,7 @@ class DocenteController extends Controller
       $find = Docente::where('ci', $request->get('ci'))->count();
 
       if ($find > 0) {
-        return to_route('admin.dashboard.docentes.create')->withErrors(["message-error" => "Este docente ya existe"]);
+        return to_route('admin.dashboard.docentes.index')->withErrors(["message-error" => "Este docente ya existe"]);
       }
       Docente::create([
         "nombres" => $request->get("nombres", ""),

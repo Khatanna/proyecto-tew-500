@@ -7,7 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class NotasAsistencia extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $table = "notas_asistencia";
+  protected $table = "notas_asistencia";
+  public $timestamps = false;
+  public $fillable = [
+    "cursa_id",
+    "asistencia_id",
+    "asistencia"
+  ];
 }

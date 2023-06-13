@@ -7,7 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Asistencia extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $table = "asistencia";
+  protected $table = "asistencia";
+  public $fillable = [
+    "imparte_id",
+    "tema",
+    "fecha"
+  ];
+
+  public $timestamps = false;
 }

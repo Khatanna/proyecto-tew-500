@@ -12,10 +12,24 @@ class Materia extends Model
 
   protected $table = "materia";
   public $timestamps = false;
-
+  protected $fillable = [
+    "codigo",
+    "nombre",
+    "semestre"
+  ];
 
   public function docentes()
   {
-    return $this->belongsToMany(Docente::class, "Imparte");
+    return $this->belongsToMany(Docente::class, "imparte");
+  }
+
+  public function laboratorios($docenteId, $gestion, $periodo, $turno)
+  {
+    return $this->hasManyThrough(Laboratorio::class, Imparte::class)->where([
+      "docente_id" => $docenteId,
+      "gestion" => $gestion,
+      "periodo" => $periodo,
+      "turno" => $turno
+    ]);
   }
 }
