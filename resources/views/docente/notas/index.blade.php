@@ -41,6 +41,14 @@
       opacity: 0.1;
       z-index: 0;
     }
+
+    body {
+      user-select: none;
+      -moz-user-select: none; /* Para Firefox */
+      -webkit-user-select: none; /* Para Chrome, Safari y Opera */
+      -ms-user-select: none; /* Para Internet Explorer y Microsoft Edge */
+    }
+
   </style>
 @endsection
 @section('content')

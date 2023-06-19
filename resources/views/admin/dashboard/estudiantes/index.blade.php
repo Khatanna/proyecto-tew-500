@@ -91,13 +91,44 @@
   <table class="table table-hover table-light table-striped align-middle">
     <thead>
     <tr>
-      @foreach($columns as $column)
-        <th>
-          <a href="{{ route("admin.dashboard.estudiantes.index", ["orderBy" => $column, "type" => $type])}}" class="nav-link dropdown-toggle">
-            {{ ucfirst(join(' ', explode('_', $column))) }}
-          </a>
-        </th>
-      @endforeach
+      <th>
+        <a href="{{ route("admin.dashboard.estudiantes.index", ["orderBy" => "id", "type" => $type])}}" class="nav-link dropdown-toggle">
+          Nro
+        </a>
+      </th>
+      <th>
+        <a href="{{ route("admin.dashboard.estudiantes.index", ["orderBy" => "nombres", "type" => $type])}}" class="nav-link dropdown-toggle">
+          Nombres
+        </a>
+      </th>
+      <th>
+        <a href="{{ route("admin.dashboard.estudiantes.index", ["orderBy" => "apellido_paterno", "type" => $type])}}" class="nav-link dropdown-toggle">
+          Apellido paterno
+        </a>
+      </th>
+      <th>
+        <a href="{{ route("admin.dashboard.estudiantes.index", ["orderBy" => "apellido_materno", "type" => $type])}}" class="nav-link dropdown-toggle">
+          Apellido materno
+        </a>
+      </th>
+      <th>
+        <a href="{{ route("admin.dashboard.estudiantes.index", ["orderBy" => "ci", "type" => $type])}}" class="nav-link dropdown-toggle">
+          C.I.
+        </a>
+      </th>
+      <th>
+        Correo institucional
+      </th>
+      <th>
+        <a href="{{ route("admin.dashboard.estudiantes.index", ["orderBy" => "matricula", "type" => $type])}}" class="nav-link dropdown-toggle">
+          Matricula
+        </a>
+      </th>
+      <th>
+        <a href="{{ route("admin.dashboard.estudiantes.index", ["orderBy" => "estado", "type" => $type])}}" class="nav-link dropdown-toggle">
+          Estado
+        </a>
+      </th>
       <th>Operaciones</th>
     </tr>
     </thead>
