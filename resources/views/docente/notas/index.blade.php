@@ -222,8 +222,10 @@
                     id="{{ $estudiante->id }}"
                     ondblclick="readonly(this)"
                     onfocusout="focusOut(this)"
+                    oninput="checkLimit(this)"
                     name="nota_primer_parcial-{{$estudiante->pivot->id}}"
-                    value="{{$estudiante->pivot->nota_primer_parcial }}">
+                    value="{{$estudiante->pivot->nota_primer_parcial }}"
+                    min="0" max="10">
                   <div class="d-none">
                     {{ $estudiante->pivot->nota_primer_parcial }}
                   </div>
@@ -235,7 +237,8 @@
                     name="nota_segundo_parcial-{{$estudiante->pivot->id}}"
                     ondblclick="readonly(this)"
                     onfocusout="focusOut(this)"
-                    value="{{ $estudiante->pivot->nota_segundo_parcial }}">
+                    oninput="checkLimit(this)"
+                    value="{{ $estudiante->pivot->nota_segundo_parcial }}" min="0" max="15">
                 </td>
                 <td class="p-0">{{ ($estudiante->pivot->nota_primer_parcial) + ($estudiante->pivot->nota_segundo_parcial ) }}</td>
                 <td onclick="highlightRow(this)"></td>
@@ -357,6 +360,18 @@
             rows[j].classList.add('dimmed');
           }
         }
+      }
+    }
+
+    function checkLimit(input) {
+      const value = parseInt(input.value);
+
+      if (value < parseInt(input.min)) {
+        input.setCustomValidity("El valor mínimo es " + input.min);
+      } else if (value > parseInt(input.max)) {
+        input.setCustomValidity("El valor máximo es " + input.max);
+      } else {
+        input.setCustomValidity(""); // Restablecer el mensaje de error predeterminado
       }
     }
   </script>

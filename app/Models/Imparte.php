@@ -27,11 +27,11 @@ class Imparte extends Model
 
   public function materia()
   {
-    return $this->belongsTo(Materia::class, "Materia_id", "id");
+    return $this->belongsTo(Materia::class, "materia_id", "id");
   }
 
   public function docente()
   {
-    return $this->belongsTo(Docente::class, "Docente_id", "id");
+    return $this->belongsTo(Docente::class, "docente_id", "id");
   }
 }
