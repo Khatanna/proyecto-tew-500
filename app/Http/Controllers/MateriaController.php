@@ -21,12 +21,18 @@ class MateriaController extends Controller
   public function store(Request $request)
   {
     Materia::create($request->all());
-    return back()->withErrors(["message-success" => "Materia creada correctamente"]);
+    return back()->withErrors(["message-success" => "Materia ha sido creada correctamente"]);
   }
 
   public function update(Request $request, Materia $materia)
   {
     $materia->update($request->all());
-    return back()->withErrors(["message-success" => "Materia actualizada correctamente"]);
+    return back()->withErrors(["message-success" => "Materia ha sido actualizada correctamente"]);
+  }
+
+  public function destroy(Materia $materia)
+  {
+    $materia->delete();
+    return back()->withErrors(["message-success" => "Materia ha sido eliminada correctamente"]);
   }
 }

@@ -15,8 +15,14 @@
     <span class="alert-close float-end btn-close" onclick="closeAlert()"></span>
   </div>
   @enderror
-  @error('message-success')
-  <div class="alert alert-success mt-2" role="alert" id="alert">
+  @if(session()->has('message-success'))
+    <div class="alert alert-success mt-2" role="alert" id="alert">
+      <strong>{{ session('message-success') }}</strong>
+      <span class="alert-close float-end btn-close" onclick="closeAlert()"></span>
+    </div>
+  @endif
+  @error('file')
+  <div class="alert alert-danger mt-2" role="alert" id="alert">
     <strong>{{$message}}</strong>
     <span class="alert-close float-end btn-close" onclick="closeAlert()"></span>
   </div>
@@ -134,7 +140,7 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                  <form action="{{ route('admin.dashboard.docentes.update')}}" method="post" class="row g-3" id="form-update">
+                  <form action="{{ route('admin.dashboard.docentes.update', ["docente" => $docente->id])}}" method="post" class="row g-3" id="form-update">
                     @csrf
                     @method('put')
                     <label for="nombres" class="col-md-6">
@@ -151,7 +157,7 @@
                     </label>
                     <label for="codigo" class="col-md-6">
                       Codigo de docente:
-                      <input type="text" placeholder="Codigo" class="form-control" name="codigo" id="codigo" value="{{$docente->codigo}}">
+                      <input type="text" placeholder="Codigo" class="form-control" name="codigo" id="codigo" value="{{$docente->codigo}}" disabled>
                     </label>
                     <label for="old-ci" class="col-md-6 d-none">
                       <input type="text" placeholder="Número de carnet" class="form-control" name="old-ci" id="old-ci" value="{{$docente->ci}}" hidden="">
@@ -189,6 +195,40 @@
     @endforeach
     </tbody>
   </table>
+  <div class="position-fixed bottom-0 ">
+    {{ $docentes->links() }}
+  </div>
+  <div class="position-fixed bottom-0 end-0">
+    <button class="btn btn-sm btn-success m-3" data-bs-toggle="modal" data-bs-target="#modalCrearMuchos" type="button">
+      Añadir desde fichero
+    </button>
+  </div>
+  <div class="modal fade" id="modalCrearMuchos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Añadir registros</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{{ route('admin.dashboard.docentes.store-many')}}" method="post" class="row g-3" enctype="multipart/form-data">
+            @csrf
+            <label for="file" class="col-md-12">
+              Archivo:
+              <input type="file" placeholder="archivo" class="form-control" name="file" id="file">
+
+            </label>
+            <div class="col-md-12">
+              <button type="button" class="btn btn-warning float-start" data-bs-dismiss="modal">Cancelar
+              </button>
+              <button type="submit" class="btn btn-success float-end">Enviar archivo</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   @if($docentes->count() === 0)
     <div class="h-75 d-flex align-items-center justify-content-center flex-column">
       @isset($codigo)

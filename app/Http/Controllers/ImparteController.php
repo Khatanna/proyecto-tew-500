@@ -11,13 +11,14 @@ class ImparteController extends Controller
   public function index(Request $request)
   {
     $semestre = array_filter($request->keys(), fn($k) => $k !== 'gestion');
-    $gestion = $request->get('gestion') ?? 2020;
+    $gestion_selected = $request->get('gestion') ?? 2023;
     $checked = $request->all();
 
+    $gestiones = Imparte::pluck('gestion')->unique();
     $docente = Docente::find(auth()->user()->id);
-    $materias = $request->has('all') ? $docente->get_materias_by_gestion($gestion)->get() : $docente->get_materias_by_semestre_and_gestion($semestre, $gestion)->get();
+    $materias = $request->has('all') || count($semestre) === 0 ? $docente->get_materias_by_gestion($gestion_selected)->get() : $docente->get_materias_by_semestre_and_gestion($semestre, $gestion_selected)->get();
 
-    return view('home', compact('materias', 'checked', 'gestion'));
+    return view('home', compact('materias', 'checked', 'gestion_selected', 'gestiones'));
   }
 
   public function update(Request $request)
@@ -46,13 +47,7 @@ class ImparteController extends Controller
 
   public function store(Request $request)
   {
-    Imparte::create([
-      "docente_id" => $request->get('docente_id'),
-      "materia_id" => $request->get('materia_id'),
-      "gestion" => $request->get('gestion'),
-      "periodo" => $request->get('periodo'),
-      "turno" => $request->get('turno'),
-    ]);
+    Imparte::create($request->all());
     return back()->withErrors(['message-success' => 'Se creo la asignacion correctamente']);
   }
 }

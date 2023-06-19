@@ -50,21 +50,9 @@
               Nombre de la Materia:
               <input type="text" class="form-control" name="nombre">
             </label>
-            <label for="codigo" class="col-md-6">
+            <label for="codigo" class="col-md-12">
               Codigo de materia:
               <input type="text" min="1" max="7" class="form-control" name="codigo">
-            </label>
-            <label for="semestr" class="col-md-6">
-              Semestre:
-              <select name="semestre" id="" class="form-select">
-                <option value="" selected disabled>Semestre</option>
-                <option value="primero">Primer semestre</option>
-                <option value="segundo">Segundo semestre</option>
-                <option value="tercero">Tercer semestre</option>
-                <option value="cuarto">Cuarto semestre</option>
-                <option value="quinto">Quinto semestre</option>
-                <option value="sexto">Sexto semestre</option>
-              </select>
             </label>
             <div class="col-md-12">
               <button type="button" class="btn btn-warning float-start" data-bs-dismiss="modal">Cancelar
@@ -95,7 +83,15 @@
                 @endforeach
               </select>
             </label>
-
+            <label for="docente_id" class="col-md-12">
+              Docente:
+              <select name="docente_id" id="docente_id" class="form-select" required>
+                <option value="" disabled selected>Docente</option>
+                @foreach($docentes as $docente)
+                  <option value="{{$docente->id}}">{{$docente->nombres }} ({{$docente->codigo}})</option>
+                @endforeach
+              </select>
+            </label>
             <label for="name" class="col-md-6">
               Turno:
               <select name="turno" id="" class="form-select">
@@ -105,14 +101,14 @@
                 <option value="noche">noche</option>
               </select>
             </label>
-
-            <label for="docente_id" class="col-md-6">
-              Docente:
-              <select name="docente_id" id="docente_id" class="form-select" required>
-                <option value="" disabled selected>Docente</option>
-                @foreach($docentes as $docente)
-                  <option value="{{$docente->id}}">{{$docente->nombres }} ({{$docente->codigo}})</option>
-                @endforeach
+            <label for="paralelo_id" class="col-md-6">
+              Paralelo:
+              <select name="paralelo" id="" class="form-select">
+                <option value="" selected disabled>Paralelo</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
               </select>
             </label>
             <fieldset class="col-md-6">
@@ -132,6 +128,14 @@
               Gestion:
               <input type="number" min="2020" max="{{ \Carbon\Carbon::now()->year }}" step="1" value="" class="form-control" name="gestion" placeholder="{{\Carbon\Carbon::now()->year}}">
             </label>
+            <label for="primer_parcial_id" class="col-md-6">
+              Fecha primer parcial:
+              <input type="date" class="form-control" name="primer_parcial">
+            </label>
+            <label for="segundo_parcial_id" class="col-md-6">
+              Fecha segundo parcial:
+              <input type="date" class="form-control" name="segundo_parcial">
+            </label>
             <div class="col-md-12">
               <button type="button" class="btn btn-warning float-start" data-bs-dismiss="modal">Cancelar
               </button>
@@ -142,7 +146,7 @@
       </div>
     </div>
   </div>
-  <table class="table table-hover table-light table-striped align-middle h-25" style="overflow: scroll">
+  <table class="table table-hover table-light table-striped align-middle">
     <thead>
     <tr>
       @foreach($columns as $column)
@@ -171,6 +175,14 @@
             Modificar
           </button>
 
+          <form action="{{ route('admin.dashboard.materias.destroy', ["materia" => $materia->id]) }}" class="d-inline-block" method="post">
+            @csrf
+            @method('delete')
+            <button class="btn btn-sm btn-danger">
+              Eliminar
+            </button>
+          </form>
+
           <div class="modal fade" id="modalUpdate{{$materia->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
             <div class="modal-dialog">
               <div class="modal-content">
@@ -186,21 +198,9 @@
                       Nombre de la Materia:
                       <input type="text" class="form-control" name="nombre" value="{{ $materia->nombre }}">
                     </label>
-                    <label for="codigo" class="col-md-6">
+                    <label for="codigo" class="col-md-12">
                       Codigo de materia:
                       <input type="text" min="1" max="7" class="form-control" name="codigo" value="{{ $materia->codigo }}">
-                    </label>
-                    <label for="semestr" class="col-md-6">
-                      Semestre:
-                      <select name="semestre" id="" class="form-select">
-                        <option value="" selected disabled>{{ $materia->semestre }}</option>
-                        <option value="primero">Primer semestre</option>
-                        <option value="segundo">Segundo semestre</option>
-                        <option value="tercero">Tercer semestre</option>
-                        <option value="cuarto">Cuarto semestre</option>
-                        <option value="quinto">Quinto semestre</option>
-                        <option value="sexto">Sexto semestre</option>
-                      </select>
                     </label>
                     <div class="col-md-12">
                       <button type="button" class="btn btn-warning float-start" data-bs-dismiss="modal">Cancelar

@@ -77,10 +77,20 @@
                       <input type="text" class="form-control" value="{{$materia->nombre}} ({{$materia->codigo}})" disabled>
                     </label>
 
+                    <label for="docente_id" class="col-md-12">
+                      Docente:
+                      <select name="docente_id" id="docente_id" class="form-select" required>
+                        <option value="" disabled selected>{{ $docente->nombres }}</option>
+                        <option value="{{$docente->id}}" selected hidden>{{ $docente->nombres }}</option>
+                        @foreach($docentes as $_docente)
+                          <option value="{{$_docente->id}}">{{$_docente->nombres}}</option>
+                        @endforeach
+                      </select>
+                    </label>
                     <label for="name" class="col-md-6">
                       Turno:
                       <select name="turno" id="" class="form-select">
-                        <option value="{{$materia->pivot->turno}}" selected disabled>{{$materia->pivot->turno}}</option>
+                        <option value="" selected disabled>{{$materia->pivot->turno}}</option>
                         <option value="{{$materia->pivot->turno}}" selected hidden="">{{ $materia->pivot->turno }}</option>
                         <option value="mañana">mañana</option>
                         <option value="tarde">tarde</option>
@@ -88,13 +98,13 @@
                       </select>
                     </label>
 
-                    <label for="docente_id" class="col-md-6">
-                      Docente:
-                      <select name="docente_id" id="docente_id" class="form-select" required>
-                        <option value="" disabled selected>{{ $docente->nombres }}</option>
-                        <option value="{{$docente->id}}" selected hidden>{{ $docente->nombres }}</option>
-                        @foreach($docentes as $_docente)
-                          <option value="{{$_docente->id}}">{{$_docente->nombres}}</option>
+                    <label for="paralelo_id" class="col-md-6">
+                      Paralelo:
+                      <select name="paralelo" id="" class="form-select">
+                        <option value="{{$materia->pivot->paralelo}}" selected disabled>{{$materia->pivot->paralelo}}</option>
+                        <option value="{{$materia->pivot->paralelo}}" selected hidden="">{{ $materia->pivot->paralelo }}</option>
+                        @foreach(array_filter(["A", "B", "C", "D"], fn($p) => $p !== $materia->pivot->paralelo) as $paralelo)
+                          <option value="{{ $paralelo }}">{{$paralelo}}</option>
                         @endforeach
                       </select>
                     </label>

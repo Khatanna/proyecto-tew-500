@@ -48,7 +48,7 @@ class Docente extends Model implements Authenticatable
 
   public function materias()
   {
-    return $this->belongsToMany(Materia::class, "imparte")->withPivot('gestion', 'periodo', 'turno', 'primer_parcial', 'segundo_parcial', 'id');
+    return $this->belongsToMany(Materia::class, "imparte")->withPivot('gestion', 'periodo', 'turno', 'primer_parcial', 'segundo_parcial', 'id', 'paralelo');
   }
 
   public function laboratorios($materiaId, $gestion, $periodo, $turno)

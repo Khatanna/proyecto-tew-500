@@ -36,6 +36,6 @@ class Estudiante extends Model
   {
     return $this->hasManyThrough(NotasLaboratorio::class, Cursa::class)->where([
       ["imparte_id", "=", $imparte_id]
-    ])->get();
+    ])->withWhereHas('laboratorio', fn($q) => $q->where('habilitado', '=', true))->get();
   }
 }

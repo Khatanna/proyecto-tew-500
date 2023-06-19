@@ -7,7 +7,7 @@ use App\Models\Cursa;
 use App\Models\Imparte;
 use App\Models\NotasAsistencia;
 use App\Models\NotasLaboratorio;
-use http\Env\Request;
+use Illuminate\Http\Request;
 use View;
 use Maatwebsite\Excel\Facades\Excel;
 use TCPDF;
@@ -16,7 +16,7 @@ class NotasController extends Controller
 {
   public function show(Imparte $imparte)
   {
-    $estudiantes = $imparte->estudiantes;
+    $estudiantes = $imparte->estudiantes->where('estado', '=', 'activo');
     $laboratorios = $imparte->laboratorios->where('habilitado', '=', true);;
     $asistencias = $imparte->asistencias;
 

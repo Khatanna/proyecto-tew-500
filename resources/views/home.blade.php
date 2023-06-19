@@ -4,11 +4,25 @@
 
 @section('styles')
   <style>
-    * {
-      /*outline: 1px solid red;*/
+    .input-wrapper {
+      position: relative;
     }
+
+    #passwordInput {
+      padding-right: 30px; /* Espacio para el icono dentro del campo de entrada */
+    }
+
+    #eyeIcon {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      cursor: pointer;
+    }
+
   </style>
 @endsection
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 @section('content')
   @if(session('status'))
@@ -24,6 +38,7 @@
       </div>
     </div>
   @endif
+
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-2 vh-100 border-end">
@@ -49,22 +64,25 @@
           <label for="gestion">
             Gestion
             <select name="gestion" id="gestion" onchange="this.form.submit()" class="form-select">
-              @isset($gestion)
-                <option value="2020" @if($gestion === "2020") selected @endif>2020</option>
-                <option value="2021" @if($gestion === "2021") selected @endif>2021</option>
-                <option value="2022" @if($gestion === "2022") selected @endif>2022</option>
-                <option value="2023" @if($gestion === "2023") selected @endif>2023</option>
-              @endisset
+              @foreach($gestiones as $gestion)
+                <option value="{{$gestion}}" @if($gestion === $gestion_selected) selected @endif>{{ $gestion }}</option>
+              @endforeach
             </select>
           </label>
           <input type="submit" value="Filtrar" class="btn btn-sm btn-outline-secondary">
         </form>
       </div>
       <div class="col-md-10">
+        @if(session('message-success'))
+          <div class="alert alert-success mt-2" role="alert" id="alert">
+            <strong>{{session('message-success')}}</strong>
+            <span class="alert-close float-end btn-close" onclick="closeAlert()"></span>
+          </div>
+        @endif
         <div class="row justify-content-center gap-2 v-100">
           <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
-              <div class="navbar-brand d-flex align-items-center gap-2" href="#">
+              <div class="navbar-brand d-flex align-items-center gap-2 me-auto" href="#">
                 <div>
                   <x-avatar :name="auth()->user()->nombres"/>
                 </div>
@@ -83,6 +101,43 @@
                     </ul>
                   </li>
                 </ul>
+              </div>
+              <button class="fs-3 btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalAjustes" type="button">
+                ⚙ Ajustes
+              </button>
+
+              <div class="modal fade" id="modalAjustes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="exampleModalLabel">Información y datos</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <form action="{{ route('docente.perfil.update', ["docente" => auth()->user()->id])}}" method="post" class="row g-3">
+                        @csrf
+                        @method('put')
+                        <label for="" class="col-md-6">
+                          Codigo de docente:
+                          <input type="text" class="form-control" value="{{ auth()->user()->codigo }}" readonly disabled>
+                        </label>
+                        <label for="contraseña" class="col-md-6">
+                          Contraseña
+
+                          <div class="input-wrapper">
+                            <input type="password" placeholder="contraseña" class="form-control" name="contraseña" id="contraseña" value="{{ auth()->user()->contraseña }}">
+                            <i id="eyeIcon" class="far fa-eye" onclick="togglePasswordVisibility()"></i>
+                          </div>
+                        </label>
+                        <div class="col-md-12">
+                          <button type="button" class="btn btn-warning float-start" data-bs-dismiss="modal">Cancelar
+                          </button>
+                          <button type="submit" class="btn btn-success float-end">Actualizar información</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </nav>
@@ -184,5 +239,43 @@
         all.checked = false;
       })
     })
+
+    const alert = document.getElementById("alert");
+
+    if (alert !== null) {
+      setTimeout(closeAlert, 3000);
+    }
+
+    function reverseArray(array) {
+      console.log(array.reverse());
+    }
+
+    function closeAlert() {
+      const alertElement = document.getElementById("alert");
+
+      for (let i = 1.0; i >= 0.0; i -= 0.1) {
+        alertElement.style.opacity = i;
+      }
+
+      setTimeout(function () {
+        alertElement.style.display = "none";
+      }, 300);
+    }
+
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById("contraseña");
+      const eyeIcon = document.getElementById("eyeIcon");
+
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        eyeIcon.classList.remove("fa-eye");
+        eyeIcon.classList.add("fa-eye-slash");
+      } else {
+        passwordInput.type = "password";
+        eyeIcon.classList.remove("fa-eye-slash");
+        eyeIcon.classList.add("fa-eye");
+      }
+    }
+
   </script>
 @endsection

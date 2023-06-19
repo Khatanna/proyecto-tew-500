@@ -22,6 +22,7 @@
     Agregar asignación
   </button>
 
+
   <div class="modal fade" id="modalAsignacion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -30,62 +31,69 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div id="carouselAsignacion" class="carousel carousel-dark slide p-0">
-            <div class="carousel-inner">
-              @foreach($asignaciones->whereNotIn('id', $cursos->pluck('id')) as $index => $asignacion)
-                @php
-                  $active = $loop->index === 0 ? 'active' : '';
-                @endphp
-                <div class="carousel-item {{ $active }}">
-                  <div>
-                    <small>
-                      {{ $loop->index + 1 }} / {{ $asignaciones->count() - $cursos->count() }}
-                    </small>
-                  </div>
-                  <form action="{{ route('admin.dashboard.estudiantes.asignaciones.store')}}" method="post" class="row g-3" id="form-update">
-                    @csrf
-                    <label hidden>
-                      <input type="text" name="imparte_id" value="{{$asignacion->id}}">
-                      <input type="text" name="estudiante_id" value="{{$estudiante->id}}">
-                    </label>
-                    <label for="" class="col-md-12">
-                      Materia:
-                      <input type="text" disabled value="{{ $asignacion->materia->nombre }} - {{ $asignacion->materia->codigo  }}" class="form-control">
-                    </label>
-                    <label for="" class="col-md-6">
-                      Semestre:
-                      <input type="text" disabled value="{{ $asignacion->materia->semestre  }}" class="form-control">
-                    </label>
-                    <label for="" class="col-md-6">
-                      Gestion:
-                      <input type="text" disabled value="{{ $asignacion->gestion  }}" class="form-control">
-                    </label>
-                    <label for="" class="col-md-6">
-                      Periodo:
-                      <input type="text" disabled value="{{ $asignacion->periodo  }}" class="form-control">
-                    </label>
-                    <label for="" class="col-md-6">
-                      Turno:
-                      <input type="text" disabled value="{{ $asignacion->turno  }}" class="form-control">
-                    </label>
-                    <div class="col-md-12 mt-3 z-2 position-relative">
-                      <button type="button" class="btn btn-warning float-start" data-bs-dismiss="modal">Cancelar
-                      </button>
-                      <button type="submit" class="btn btn-success float-end">Agregar asignación</button>
+          @if($asignaciones->count() - $cursos->count() > 0)
+            <div id="carouselAsignacion" class="carousel carousel-dark slide p-0">
+              <div class="carousel-inner">
+                @foreach($asignaciones->whereNotIn('id', $cursos->pluck('id')) as $index => $asignacion)
+                  @php
+                    $active = $loop->index === 0 ? 'active' : '';
+                  @endphp
+                  <div class="carousel-item {{ $active }}">
+                    <div>
+                      <small>
+                        {{ $loop->index + 1 }} / {{ $asignaciones->count() - $cursos->count() }}
+                      </small>
                     </div>
-                  </form>
-                </div>
-              @endforeach
+                    <form action="{{ route('admin.dashboard.estudiantes.asignaciones.store')}}" method="post" class="row g-3" id="form-update">
+                      @csrf
+                      <label hidden>
+                        <input type="text" name="imparte_id" value="{{$asignacion->id}}">
+                        <input type="text" name="estudiante_id" value="{{$estudiante->id}}">
+                      </label>
+                      <label for="" class="col-md-12">
+                        Materia:
+                        <input type="text" disabled value="{{ $asignacion->materia->nombre }} - {{ $asignacion->materia->codigo  }}" class="form-control">
+                      </label>
+                      <label for="" class="col-md-6">
+                        Semestre:
+                        <input type="text" disabled value="{{ $asignacion->materia->semestre  }}" class="form-control">
+                      </label>
+                      <label for="" class="col-md-6">
+                        Gestion:
+                        <input type="text" disabled value="{{ $asignacion->gestion  }}" class="form-control">
+                      </label>
+                      <label for="" class="col-md-6">
+                        Periodo:
+                        <input type="text" disabled value="{{ $asignacion->periodo  }}" class="form-control">
+                      </label>
+                      <label for="" class="col-md-6">
+                        Turno:
+                        <input type="text" disabled value="{{ $asignacion->turno  }}" class="form-control">
+                      </label>
+                      <div class="col-md-12 mt-3 z-2 position-relative">
+                        <button type="button" class="btn btn-warning float-start" data-bs-dismiss="modal">Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-success float-end">Agregar asignación</button>
+                      </div>
+                    </form>
+                  </div>
+                @endforeach
+              </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselAsignacion" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselAsignacion" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselAsignacion" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselAsignacion" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
-          </div>
+          @else
+            <div class="bg-danger-subtle p-3 border rounded-1 text-body-secondary">Ya no hay mas materias para
+              asignar😓
+            </div>
+          @endif
+
         </div>
       </div>
     </div>

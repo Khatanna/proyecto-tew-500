@@ -74,15 +74,17 @@
               </ul>
             </li>
           </ul>
-
-          <a href="{{ route('login') }}" class="btn btn-sm btn-primary position-fixed bottom-0 my-3 px-5 top">Salir</a>
         </div>
       </div>
     </div>
     <div class="col-10 shadow-lg">
       @yield('content')
     </div>
+    <div class="position-fixed bottom-0 m-3" style="width: 200px">
+      <a href="{{ route('login') }}" class="btn btn-sm w-100 btn-primary bottom-0 start-0">Salir</a>
+    </div>
   </div>
+</div>
 </div>
 @yield('scripts')
 </body>

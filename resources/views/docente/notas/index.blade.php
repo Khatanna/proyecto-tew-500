@@ -32,11 +32,22 @@
       -moz-appearance: textfield;
     }
 
-    * {
+    .highlighted {
+      z-index: 20;
+      outline: 1px solid black;
+    }
+
+    .dimmed {
+      opacity: 0.1;
+      z-index: 0;
     }
   </style>
 @endsection
 @section('content')
+
+  <h3 class="text-center">{{ $imparte->materia->nombre }} "{{ $imparte->paralelo }}"</h3>
+  <h3 class="text-center">{{ ucfirst($imparte->materia->semestre) }} semestre</h3>
+  <h4 class="text-center">{{ $imparte->periodo }} / {{ $imparte->gestion }}</h4>
   <form action="{{ route('docente.estudiantes.notas.store') }}" method="post">
     @csrf
     <div class="container-fluid" id="document">
@@ -64,10 +75,11 @@
                 Tema
               </th>
               @php
-                $height = $asistencias->pluck('tema')->max(fn ($item) => strlen($item)) * 7;
+                $height_a = $asistencias->pluck('tema')->max(fn ($item) => strlen($item)) * 7;
+                $height_b = $laboratorios->pluck('tema')->max(fn ($item) => strlen($item)) * 7;
               @endphp
               @foreach($asistencias as $asistencia)
-                <th class="position-relative" style="height: {{ $height }}px">
+                <th class="position-relative" style="height: {{ $height_a }}px">
                   <div class="position-absolute top-50 start-50" style="transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap;">
                     {{ $asistencia->tema }}
                   </div>
@@ -78,7 +90,7 @@
                 Tema
               </th>
               @foreach($laboratorios as $laboratorio)
-                <th class="position-relative" style="height: {{ $height }}px">
+                <th class="position-relative" style="height: {{ $height_b }}px">
                   <div class="position-absolute top-50 start-50" style="transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap;">
                     {{ $laboratorio->tema }}
                   </div>
@@ -150,34 +162,39 @@
             <tbody>
             @foreach($estudiantes as $index => $estudiante)
               <tr>
-                <td>{{$index + 1}}</td>
-                <td class="text-start">{{ $estudiante->apellido_paterno }}</td>
-                <td class="text-start">{{ $estudiante->apellido_materno }}</td>
-                <td class="text-start" style="white-space: nowrap">{{ $estudiante->nombres }}</td>
-                <td class="text-start" style="white-space: nowrap;">{{ $estudiante->ci }}</td>
-                <td></td>
-                @for($i = 0; $i < $asistencias->count(); $i++)
+                <td onclick="highlightRow(this)">{{$index + 1}}</td>
+                <td onclick="highlightRow(this)" class="text-start">{{ $estudiante->apellido_paterno }}</td>
+                <td onclick="highlightRow(this)" class="text-start">{{ $estudiante->apellido_materno }}</td>
+                <td onclick="highlightRow(this)" class="text-start" style="white-space: nowrap">{{ $estudiante->nombres }}</td>
+                <td onclick="highlightRow(this)" class="text-start" style="white-space: nowrap;">{{ $estudiante->ci }}</td>
+                <td onclick="highlightRow(this)"></td>
+                @foreach($asistencias as $index => $asistencia)
                   @php
-                    $asistencia = $estudiante->asistencias($imparte->id)->get($i)
+                    $asistenciaEstudiante = $estudiante->asistencias($imparte->id)->get($index);
                   @endphp
-                  <td class="p-0">
-                    <label>
-                      <input
-                        class="border-0 p-0 form-control-sm"
-                        type="text"
-                        readonly
-                        name="asistencia-{{$estudiante->pivot->id}}-{{$asistencias->get($i)->id}}"
-                        value="{{$asistencia->asistencia ?? '-' }}"
-                        ondblclick="readonly(this)"
-                        onfocusout="focusOut(this)"
-                        oninput="this.value = this.value === 'a' || this.value === 'f' || this.value === 'p' ? this.value.toUpperCase() : '-'">
-                    </label>
+                  <td class="p-0" id="{{ $estudiante->id }}{{ $index }}" onclick="highlightRow(this)">
+                    <input
+                      class="border-0 p-0 form-control-sm"
+                      type="text"
+                      readonly
+                      name="asistencia-{{ $estudiante->pivot->id }}-{{ $asistencia->id }}"
+                      ondblclick="readonly(this)"
+                      onfocusout="focusOut(this)"
+                      autocomplete="off"
+                      oninput="this.value = this.value === 'a' || this.value === 'f' || this.value === 'p' ? this.value.toUpperCase() : ''"
+                      @isset($asistenciaEstudiante->asistencia)
+                        value="{{ $asistenciaEstudiante->asistencia }}"
+                      @else
+                        placeholder="-"
+                      @endisset
+                    >
                     <div style="display: none">
-                      {{ $asistencia->asistencia ?? '-' }}
+                      {{ $asistenciaEstudiante->asistencia ?? '-' }}
                     </div>
                   </td>
-                @endfor
-                <td class="p-0" style="white-space: nowrap">
+                @endforeach
+
+                <td class="p-0" style="white-space: nowrap" onclick="highlightRow(this)">
                   @php
                     $nota_asistencia = $estudiante->asistencias($imparte->id, $estudiante->id)->count() > 0 ?  $estudiante->asistencias($imparte->id, $estudiante->id)->reduce(function ($acc, $item) {
                         if($item->asistencia === "A") {
@@ -186,82 +203,77 @@
                           $acc += 50;
                         }
                         return $acc;
-                      },0) / $asistencias->count() * 0.05 : 0;
+                      }, 0) : 0;
                   @endphp
-                  {{ floor($nota_asistencia)}}
+                  {{ floor($nota_asistencia > 0 && $asistencias->count() > 0 ? $nota_asistencia * 0.05 / $asistencias->count() : 0) }}
                 </td>
-                <td class="p-0">
-                  <label for="">
-                    <input
-                      class="border-0 p-0 form-control-sm"
-                      type="number"
-                      id="{{ $estudiante->id }}"
-                      ondblclick="readonly(this)"
-                      onfocusout="focusOut(this)"
-                      name="nota_primer_parcial-{{$estudiante->pivot->id}}"
-                      value="{{$estudiante->pivot->nota_primer_parcial }}">
-                  </label>
+                <td class="p-0" onclick="highlightRow(this)">
+                  <input
+                    class="border-0 p-0 form-control-sm"
+                    type="number"
+                    id="{{ $estudiante->id }}"
+                    ondblclick="readonly(this)"
+                    onfocusout="focusOut(this)"
+                    name="nota_primer_parcial-{{$estudiante->pivot->id}}"
+                    value="{{$estudiante->pivot->nota_primer_parcial }}">
                   <div class="d-none">
                     {{ $estudiante->pivot->nota_primer_parcial }}
                   </div>
                 </td>
-                <td class="p-0">
-                  <label for="">
-                    <input
-                      class="border-0 p-0 form-control-sm"
-                      type="number"
-                      name="nota_segundo_parcial-{{$estudiante->pivot->id}}"
-                      ondblclick="readonly(this)"
-                      onfocusout="focusOut(this)"
-                      value="{{ $estudiante->pivot->nota_segundo_parcial }}">
-                  </label>
+                <td class="p-0" onclick="highlightRow(this)">
+                  <input
+                    class="border-0 p-0 form-control-sm"
+                    type="number"
+                    name="nota_segundo_parcial-{{$estudiante->pivot->id}}"
+                    ondblclick="readonly(this)"
+                    onfocusout="focusOut(this)"
+                    value="{{ $estudiante->pivot->nota_segundo_parcial }}">
                 </td>
                 <td class="p-0">{{ ($estudiante->pivot->nota_primer_parcial) + ($estudiante->pivot->nota_segundo_parcial ) }}</td>
-                <td></td>
-                @for($i = 0; $i < $laboratorios->count(); $i++)
+                <td onclick="highlightRow(this)"></td>
+                @foreach($laboratorios as $laboratorio)
                   @php
-                    $laboratorio = $laboratorios->get($i);
+                    $nota = $estudiante->laboratorios($imparte->id)->get($loop->index)->nota ?? 0;
                   @endphp
-                  <td class="p-0">
-                    <label>
-                      <input
-                        class="border-0 p-0 form-control-sm"
-                        type="number"
-                        readonly
-                        name="laboratorio-{{ $estudiante->pivot->id }}-{{ $laboratorios->get($i)->id }}"
-                        value="{{$estudiante->laboratorios($imparte->id)->get($i)->nota ?? 0}}" ondblclick="this.readOnly = false" onfocusout="x(this, {{$laboratorio->ponderacion ?? 0}})"
-                      >
-                    </label>
-                    <div style="display: none">
-                      {{ $estudiante->laboratorios($imparte->id)->get($i)->nota ?? 0 }}
-                    </div>
-                  </td>
-                @endfor
-                <td>
-                  {{ $estudiante->laboratorios($imparte->id)->filter(fn ($l) => $l->laboratorio->habilitado)->pluck('nota')->sum() }}
-                </td>
-                <td>{{ $estudiante->pivot->promedio_general }}</td>
-                <td>
-                  <label for="">
+                  <td class="p-0" onclick="highlightRow(this)">
                     <input
                       class="border-0 p-0 form-control-sm"
                       type="number"
-                      name="nota_evaluacion_final-{{$estudiante->pivot->id}}"
+                      readonly
                       ondblclick="readonly(this)"
                       onfocusout="focusOut(this)"
-                      value="{{ $estudiante->pivot->nota_evaluacion_final }}">
-                  </label>
+                      autocomplete="off"
+                      name="laboratorio-{{ $estudiante->pivot->id }}-{{ $laboratorio->id }}"
+                      value="{{ $nota }}"
+                    >
+                    <div style="display: none">
+                      {{ $nota }}
+                    </div>
+                  </td>
+                @endforeach
+                <td onclick="highlightRow(this)">
+                  {{ $estudiante->laboratorios($imparte->id)->pluck('nota')->sum() }}
+                </td>
+                <td onclick="highlightRow(this)">{{ $estudiante->pivot->promedio_general }}</td>
+                <td onclick="highlightRow(this)">
+                  <input
+                    class="border-0 p-0 form-control-sm"
+                    type="number"
+                    name="nota_evaluacion_final-{{$estudiante->pivot->id}}"
+                    ondblclick="readonly(this)"
+                    onfocusout="focusOut(this)"
+                    value="{{ $estudiante->pivot->nota_evaluacion_final }}">
 
                   <div style="display: none">
                     {{ $estudiante->pivot->nota_evaluacion_final }}
                   </div>
                 </td>
-                <td>{{$estudiante->pivot->promedio_final}}</td>
-                <td>{{ $estudiante->pivot->segundo_turno }}</td>
+                <td onclick="highlightRow(this)">{{$estudiante->pivot->promedio_final}}</td>
+                <td onclick="highlightRow(this)">{{ $estudiante->pivot->segundo_turno }}</td>
                 @php
                   $estado = $estudiante->pivot->estado === "aprobado" ? 'success' : ($estudiante->pivot->estado === "reprobado" ? 'danger' : 'dark');
                 @endphp
-                <td class="bg-{{$estado}}-subtle">{{ $estudiante->pivot->estado }}</td>
+                <td onclick="highlightRow(this)" class="bg-{{$estado}}-subtle">{{ $estudiante->pivot->estado }}</td>
               </tr>
             @endforeach
             </tbody>
@@ -289,10 +301,12 @@
   <script>
     function readonly(input) {
       input.readOnly = false
+      input.parentElement.parentNode.classList = 'table-active'
     }
 
     function focusOut(input) {
       input.readOnly = true
+      input.parentElement.parentNode.classList = ''
     }
 
     function pdf() {
@@ -314,6 +328,28 @@
           pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
           pdf.save('Notas.pdf');
         })
+    }
+
+    function highlightRow(cell) {
+      var row = cell.parentNode;
+
+      var isHighlighted = row.classList.contains('highlighted');
+
+      var rows = row.parentNode.getElementsByTagName('tr');
+      for (var i = 0; i < rows.length; i++) {
+        rows[i].classList.remove('highlighted');
+        rows[i].classList.remove('dimmed');
+      }
+
+      if (!isHighlighted) {
+        row.classList.add('highlighted');
+
+        for (var j = 0; j < rows.length; j++) {
+          if (rows[j] !== row) {
+            rows[j].classList.add('dimmed');
+          }
+        }
+      }
     }
   </script>
 @endsection

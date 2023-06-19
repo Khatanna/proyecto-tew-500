@@ -7,15 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Imparte extends Model
 {
   protected $table = "imparte";
-  protected $fillable = [
-    'docente_id',
-    'materia_id',
-    'gestion',
-    'periodo',
-    'turno',
-    'primer_parcial',
-    'segundo_parcial'
-  ];
+  protected $guarded = [];
   public $timestamps = false;
 
   public function estudiantes()

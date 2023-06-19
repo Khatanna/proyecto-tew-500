@@ -25,13 +25,19 @@
     <span class="alert-close float-end btn-close" onclick="closeAlert()"></span>
   </div>
   @enderror
+  @error('file')
+  <div class="alert alert-danger mt-2" role="alert" id="alert">
+    <strong>{{$message}}</strong>
+    <span class="alert-close float-end btn-close" onclick="closeAlert()"></span>
+  </div>
+  @enderror
   <h1>Estudiantes</h1>
 
   <div class="col-12 my-3">
     <div class="row d-flex flex-row align-items-center">
       <form action="" class="col-md-10 d-flex align-items-center gap-2">
         <label for="" class="col-md-4">
-          <input type="text" class="form-control" name="codigo" id="codigo" placeholder="Buscar estudiante por matricula" list="matriculas" autocomplete="off">
+          <input type="text" class="form-control" name="matricula" id="matricula" placeholder="Buscar estudiante por matricula" list="matriculas" autocomplete="off">
         </label>
         <label for="" class="col-md-auto">
           <input type="submit" value="Buscar estudiante" class=" w-100 btn btn-outline-success" id="input" autocomplete="off">
@@ -43,7 +49,7 @@
         </datalist>
       </form>
       <div class="col-md-2">
-        <button class=" btn btn-outline-primary float-end" data-bs-toggle="modal" data-bs-target="#modalEstudiante" type="button">
+        <button class="btn btn-outline-primary float-end" data-bs-toggle="modal" data-bs-target="#modalEstudiante" type="button">
           Registrar Estudiante
         </button>
         <div class="modal fade" id="modalEstudiante" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
@@ -54,7 +60,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <form action="{{ route('admin.dashboard.docentes.store')}}" method="post" class="row g-3">
+                <form action="{{ route('admin.dashboard.estudiantes.store')}}" method="post" class="row g-3">
                   @csrf
                   <label for="nombres" class="col-md-6">
                     <input type="text" placeholder="Nombres" class="form-control" name="nombres" id="nombres">
@@ -196,13 +202,43 @@
   <div class="position-fixed bottom-0 ">
     {{ $estudiantes->links() }}
   </div>
+  <div class="position-fixed bottom-0 end-0">
+    <button class="btn btn-sm btn-success m-3" data-bs-toggle="modal" data-bs-target="#modalCrearMuchos" type="button">
+      Añadir desde fichero
+    </button>
+  </div>
+  <div class="modal fade" id="modalCrearMuchos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Añadir registros</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{{ route('admin.dashboard.estudiantes.store-many')}}" method="post" class="row g-3" enctype="multipart/form-data">
+            @csrf
+            <label for="file" class="col-md-12">
+              Archivo:
+              <input type="file" placeholder="archivo" class="form-control" name="file" id="file">
+
+            </label>
+            <div class="col-md-12">
+              <button type="button" class="btn btn-warning float-start" data-bs-dismiss="modal">Cancelar
+              </button>
+              <button type="submit" class="btn btn-success float-end">Enviar archivo</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
   @if($estudiantes->count() === 0)
     <div class="h-75 d-flex align-items-center justify-content-center flex-column">
-      @isset($codigo)
-        <h2 class="text-center">No hay docentes con el codigo ({{ $codigo }}) ahora mismo 😥</h2>
-        <a href="{{ route('admin.dashboard.docentes.index') }}">Mostrar todos</a>
+      @isset($matricula)
+        <h2 class="text-center">No hay estudiantes con la matricula ({{ $matricula }}) ahora mismo 😥</h2>
+        <a href="{{ route('admin.dashboard.estudiantes.index') }}">Mostrar todos</a>
       @else
-        <h1 class="text-center">No hay docentes ahora mismo 😥</h1>
+        <h1 class="text-center">No hay estudiantes ahora mismo 😥</h1>
       @endisset
     </div>
   @endif

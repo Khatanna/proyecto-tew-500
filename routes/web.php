@@ -17,6 +17,7 @@ Route::middleware('auth')->group(function() {
   Route::get('/', [ImparteController::class, 'index'])->name('home');
   Route::get('/notas/{imparte}', [NotasController::class, 'show'])->name('docente.estudiantes');
   Route::post('/notas/create', [NotasController::class, 'store'])->name('docente.estudiantes.notas.store');
+  Route::put('/perfil/{docente}', [DocenteController::class, 'update'])->name('docente.perfil.update');
   Route::get('/notas/excel/{imparte}', [NotasController::class, 'generate_excel'])->name('docente.estudiantes.excel');
   Route::get('/notas/pdf/{imparte}', [NotasController::class, 'generate_pdf'])->name('docente.estudiantes.pdf');
   Route::prefix('laboratorios')->group(function() {
@@ -39,7 +40,8 @@ Route::prefix('/admin')->group(function() {
     Route::prefix('docentes')->group(function() {
       Route::get('/', [DocenteController::class, 'index'])->name('admin.dashboard.docentes.index');
       Route::post('/store', [DocenteController::class, 'store'])->name('admin.dashboard.docentes.store');
-      Route::put('/update', [DocenteController::class, 'update'])->name('admin.dashboard.docentes.update');
+      Route::post('/store-many', [DocenteController::class, 'store_many'])->name('admin.dashboard.docentes.store-many');
+      Route::put('/update/{docente}', [DocenteController::class, 'update'])->name('admin.dashboard.docentes.update');
       Route::get('/{id}', [DocenteController::class, 'show'])->name('admin.dashboard.docentes.show');
       Route::prefix('asignaciones')->group(function() {
         Route::put('/update', [ImparteController::class, 'update'])->name('admin.dashboard.docentes.asignaciones.update');
@@ -49,6 +51,7 @@ Route::prefix('/admin')->group(function() {
     Route::prefix('estudiantes')->group(function() {
       Route::get('/', [EstudianteController::class, 'index'])->name('admin.dashboard.estudiantes.index');
       Route::post('/store', [EstudianteController::class, 'store'])->name('admin.dashboard.estudiantes.store');
+      Route::post('/store-many', [EstudianteController::class, 'store_many'])->name('admin.dashboard.estudiantes.store-many');
       Route::put('/update', [EstudianteController::class, 'update'])->name('admin.dashboard.estudiantes.update');
       Route::get('/{id}', [EstudianteController::class, 'show'])->name('admin.dashboard.estudiantes.show');
       Route::prefix('asignaciones')->group(function() {
@@ -61,6 +64,7 @@ Route::prefix('/admin')->group(function() {
       Route::get('/', [MateriaController::class, 'index'])->name('admin.dashboard.materias.index');
       Route::post('/', [MateriaController::class, 'store'])->name('admin.dashboard.materias.store');
       Route::put('/{materia}', [MateriaController::class, 'update'])->name('admin.dashboard.materias.update');
+      Route::delete('/{materia}', [MateriaController::class, 'destroy'])->name('admin.dashboard.materias.destroy');
     });
   });
 });
